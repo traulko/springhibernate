@@ -3,18 +3,11 @@ package com.innowise.springhibernate.entities;
 import com.innowise.springhibernate.dto.EmployerDto;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @NamedNativeQuery(
         name = "PostDtoNativeQuery",
-        query = """
-                SELECT e.id AS id,
-                    e.name AS name,
-                    e.company AS company
-            FROM employer e
-            """,
+        query = "SELECT e.id AS id, e.name AS name, e.company AS company FROM employer e",
         resultSetMapping = "PostDtoMapping"
 )
 
@@ -40,7 +33,7 @@ public class Employer extends Person {
     private String company;
 
     public Employer(Employer employer) {
-        super(employer.getId(), employer.getName());
+        super(employer.getName());
         this.company = employer.getCompany();
     }
 }

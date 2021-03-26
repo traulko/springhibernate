@@ -56,17 +56,18 @@ public class UserServiceImpl implements UserService {
         userDao.saveOrUpdate(user);
     }
 
-    private void secondLevelCacheTest() {
-        Session session = sessionFactory.openSession();
-        User user = session.get(User.class, userId);
-        session.close();
-
-        session = sessionFactory.openSession();
-        User user1 = session.get(User.class, userId);
-        session.close();
-    }
+//    private void secondLevelCacheTest() {
+//        Session session = sessionFactory.openSession();
+//        User user = session.get(User.class, userId);
+//        session.close();
+//
+//        session = sessionFactory.openSession();
+//        User user1 = session.get(User.class, userId);
+//        session.close();
+//    }
 
     private void thirdLevelCacheTest() { // does not work :(
+        Session session = sessionFactory.openSession();
         String queryText = "FROM User where id = 3L";
 
         Session session1 = sessionFactory.openSession();

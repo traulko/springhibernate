@@ -6,12 +6,20 @@ import com.innowise.springhibernate.entities.Employer;
 import com.innowise.springhibernate.entities.User;
 import com.innowise.springhibernate.mappers.EmployerMapper;
 import com.innowise.springhibernate.service.EmployerService;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
+import java.util.List;
 
 @Service
 public class EmployerServiceImpl implements EmployerService {
-    private static final BATCH_SIZE = 5;
+    private static final int BATCH_SIZE = 5;
 
     private final EmployerDao employerDao;
     private final SessionFactory sessionFactory;
@@ -27,8 +35,16 @@ public class EmployerServiceImpl implements EmployerService {
         employerDao.save(EmployerMapper.INSTANCE.employerDtoToEmployer(employerDto));
     }
 
+    @Override
+    public void methodForTest() {
+        batchTest();
+        orderInsertsBatchTest();
+        updateBatchTest();
+        jpaQueryProjectionTest();
+    }
+
     @Transactional
-    private void batchTest() {
+    public void batchTest() {
         Session session = sessionFactory.openSession();
         for (int i = 0; i < 10; i++) {
             Employer employer = createEmployer();
@@ -38,20 +54,24 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Transactional
-    private void orderInsertsBatchTest() {
+    public void orderInsertsBatchTest() {
         Session session = sessionFactory.openSession();
+        EntityManagerFactory entityManagerFactory = session.getEntityManagerFactory();
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        entityManager.getTransaction().begin();
         for (int i = 0; i < 10; i++) {
-            if (i > 0 && i % BATCH_SIZE == 0) {
-                session.flush();
-                session.clear();
-            }
             Employer employer = createEmployer();
-            session.persist(employer);
+            entityManager.persist(employer);
             Employer firstEmployer = createEmployer(employer);
             Employer secondEmployer = createEmployer(employer);
-            session.persist(firstEmployer);
-            session.persist(secondEmployer);
+            entityManager.persist(firstEmployer);
+            entityManager.persist(secondEmployer);
+            if (i > 0 && i % BATCH_SIZE == 0) {
+                entityManager.flush();
+                entityManager.clear();
+            }
         }
+        entityManager.getTransaction().commit();
         session.close();
     }
 
@@ -67,18 +87,13 @@ public class EmployerServiceImpl implements EmployerService {
         session.close();
     }
 
-    private jpaQueryProjectionTest() {
+    private void jpaQueryProjectionTest() {
         Session session = sessionFactory.openSession();
-        List<EmployerDto> employerDtoList = session.createQuery("""
-            select new com.innowise.springhibernate.dto.EmployerDto(
-                e.id,
-                e.name,
-                e.company
-            )
-            from Employer e
-            """, EmployerDto.class).getResultList();
+        List<EmployerDto> employerDtoList = session.createQuery(
+                "select new com.innowise.springhibernate.dto.EmployerDto(e.id, e.name, e.company) " +
+                        "from Employer e"
+            , EmployerDto.class).getResultList();
         //List<EmployerDto> employerDtoList = session.createNamedQuery("PostDtoNativeQuery").getResultList();
-        )
     }
 
 
