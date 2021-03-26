@@ -1,0 +1,52 @@
+plugins {
+    id 'org.springframework.boot' version '2.4.3'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'org.postgresql:postgresql'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // https://mvnrepository.com/artifact/org.springframework/spring-context
+    implementation group: 'org.springframework', name: 'spring-context', version: '5.3.5'
+// https://mvnrepository.com/artifact/org.springframework/spring-tx
+    implementation group: 'org.springframework', name: 'spring-tx', version: '5.3.5'
+// https://mvnrepository.com/artifact/org.springframework/spring-orm
+    implementation group: 'org.springframework', name: 'spring-orm', version: '5.3.5'
+// https://mvnrepository.com/artifact/org.hibernate/hibernate-core
+    implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.4.29.Final'
+    implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.mapstruct:mapstruct:1.4.1.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.1.Final'
+    // https://mvnrepository.com/artifact/org.hibernate/hibernate-ehcache
+//    implementation group: 'org.hibernate', name: 'hibernate-ehcache', version: '5.4.29.Final'
+// https://mvnrepository.com/artifact/javax.cache/cache-api
+//    implementation group: 'javax.cache', name: 'cache-api', version: '1.1.1'
+    // https://mvnrepository.com/artifact/org.hibernate/hibernate-jcache
+    implementation group: 'org.hibernate', name: 'hibernate-jcache', version: '5.4.29.Final'
+// https://mvnrepository.com/artifact/net.sf.ehcache/ehcache
+    implementation group: 'org.ehcache', name: 'ehcache', version: '3.6.3'
+}
+
+test {
+    useJUnitPlatform()
+}
